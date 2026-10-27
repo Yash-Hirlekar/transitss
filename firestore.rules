@@ -1,0 +1,86 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUserProfile(data) {
+      return data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
+             data.displayName is string && data.displayName.size() > 0 && data.displayName.size() <= 100 &&
+             (!('email' in data) || (data.email is string && data.email.size() <= 150)) &&
+             (!('photoUrl' in data) || (data.photoUrl is string && data.photoUrl.size() <= 1000)) &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             (!('lastActiveAt' in data) || (data.lastActiveAt is timestamp && data.lastActiveAt <= request.time));
+    }
+
+    function isValidCrowdReport(data) {
+      return data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
+             (!('userName' in data) || (data.userName is string && data.userName.size() <= 100)) &&
+             data.timestamp is timestamp && data.timestamp <= request.time &&
+             data.latitude is number && data.latitude >= -90.0 && data.latitude <= 90.0 &&
+             data.longitude is number && data.longitude >= -180.0 && data.longitude <= 180.0 &&
+             data.nearestStation is string && data.nearestStation.size() > 0 && data.nearestStation.size() <= 100 &&
+             data.line is string && data.line.size() <= 50 &&
+             data.speedKmh is number && data.speedKmh >= 0.0 && data.speedKmh <= 250.0 &&
+             data.direction is string && data.direction in ['UP', 'DOWN', 'STATIONARY', 'UNKNOWN'] &&
+             data.crowdLevel is string && data.crowdLevel in ['GREEN_SEATS', 'YELLOW_STAND', 'RED_CRUSH'] &&
+             data.crowdCategory is string && data.crowdCategory in ['PLATFORM', 'TRAIN'] &&
+             (!('isSynced' in data) || data.isSynced is bool);
+    }
+
+    function isValidEmergency(data) {
+      return data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
+             (!('userName' in data) || (data.userName is string && data.userName.size() <= 100)) &&
+             data.timestamp is timestamp && data.timestamp <= request.time &&
+             data.latitude is number && data.latitude >= -90.0 && data.latitude <= 90.0 &&
+             data.longitude is number && data.longitude >= -180.0 && data.longitude <= 180.0 &&
+             data.nearestStation is string && data.nearestStation.size() <= 100 &&
+             (!('nextStationPredicted' in data) || (data.nextStationPredicted is string && data.nextStationPredicted.size() <= 100)) &&
+             (!('heading' in data) || data.heading is number) &&
+             (!('speedKmh' in data) || data.speedKmh is number) &&
+             (!('emergencyType' in data) || (data.emergencyType is string && data.emergencyType.size() <= 50)) &&
+             data.status is string && data.status in ['ACTIVE', 'CANCELLED', 'RESOLVED'] &&
+             data.resolved is bool;
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /users/{userId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && incoming().userId == userId && isValidUserProfile(incoming());
+      allow update: if isOwner(userId) && incoming().userId == existing().userId && incoming().createdAt == existing().createdAt && isValidUserProfile(incoming());
+      allow delete: if isOwner(userId);
+    }
+
+    match /crowd_reports/{reportId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == incoming().userId && isValidCrowdReport(incoming());
+      allow update: if isSignedIn() && request.auth.uid == existing().userId && incoming().userId == existing().userId && incoming().timestamp == existing().timestamp && isValidCrowdReport(incoming());
+      allow delete: if isSignedIn() && request.auth.uid == existing().userId;
+    }
+
+    match /emergencies/{emergencyId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == incoming().userId && isValidEmergency(incoming());
+      allow update: if isSignedIn() && (request.auth.uid == existing().userId || incoming().resolved == true) && isValidEmergency(incoming());
+      allow delete: if isSignedIn() && request.auth.uid == existing().userId;
+    }
+  }
+}

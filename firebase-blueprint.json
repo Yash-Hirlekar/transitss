@@ -1,0 +1,74 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile registered via Google Sign-In",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastActiveAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "displayName", "createdAt"]
+    },
+    "CrowdReport": {
+      "title": "CrowdReport",
+      "description": "Crowdsourced train and platform density report",
+      "type": "object",
+      "properties": {
+        "reportId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "nearestStation": { "type": "string" },
+        "line": { "type": "string", "enum": ["Western", "Central", "Harbour", "Trans-Harbour", "Uran", "Diva-Roha", "Other"] },
+        "speedKmh": { "type": "number" },
+        "direction": { "type": "string", "enum": ["UP", "DOWN", "STATIONARY", "UNKNOWN"] },
+        "crowdLevel": { "type": "string", "enum": ["GREEN_SEATS", "YELLOW_STAND", "RED_CRUSH"] },
+        "crowdCategory": { "type": "string", "enum": ["PLATFORM", "TRAIN"] },
+        "isSynced": { "type": "boolean" }
+      },
+      "required": ["userId", "timestamp", "latitude", "longitude", "nearestStation", "line", "speedKmh", "direction", "crowdLevel", "crowdCategory"]
+    },
+    "Emergency": {
+      "title": "Emergency",
+      "description": "High-priority SOS ping for emergency intercept and assistance",
+      "type": "object",
+      "properties": {
+        "emergencyId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "nearestStation": { "type": "string" },
+        "nextStationPredicted": { "type": "string" },
+        "heading": { "type": "number" },
+        "speedKmh": { "type": "number" },
+        "emergencyType": { "type": "string" },
+        "status": { "type": "string", "enum": ["ACTIVE", "CANCELLED", "RESOLVED"] },
+        "resolved": { "type": "boolean" }
+      },
+      "required": ["userId", "timestamp", "latitude", "longitude", "nearestStation", "status", "resolved"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile documents"
+    },
+    "/crowd_reports/{reportId}": {
+      "schema": "CrowdReport",
+      "description": "Global crowd density reports submitted by users"
+    },
+    "/emergencies/{emergencyId}": {
+      "schema": "Emergency",
+      "description": "Active or logged emergency alerts"
+    }
+  }
+}

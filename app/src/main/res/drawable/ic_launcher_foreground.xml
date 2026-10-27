@@ -1,0 +1,53 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:translateX="0"
+        android:translateY="0">
+        <!-- Train Body Shield/Chassis -->
+        <path
+            android:fillColor="#0D1F3D"
+            android:strokeColor="#00E5FF"
+            android:strokeWidth="2.5"
+            android:pathData="M32,32 C32,24 40,20 54,20 C68,20 76,24 76,32 L76,68 C76,73 71,78 66,80 L54,82 L42,80 C37,78 32,73 32,68 Z" />
+
+        <!-- Windshield Glass -->
+        <path
+            android:fillColor="#00E5FF"
+            android:fillAlpha="0.85"
+            android:pathData="M37,32 C37,28 42,26 54,26 C66,26 71,28 71,32 L71,46 C71,48 69,50 66,50 L42,50 C39,50 37,48 37,46 Z" />
+
+        <!-- Center Divider on windshield -->
+        <path
+            android:fillColor="#0D1F3D"
+            android:pathData="M53,26 L55,26 L55,50 L53,50 Z" />
+
+        <!-- Headlights -->
+        <path
+            android:fillColor="#FFD700"
+            android:pathData="M38,62 C38,59.8 39.8,58 42,58 C44.2,58 46,59.8 46,62 C46,64.2 44.2,66 42,66 C39.8,66 38,64.2 38,62 Z" />
+        <path
+            android:fillColor="#FFD700"
+            android:pathData="M62,62 C62,59.8 63.8,58 66,58 C68.2,58 70,59.8 70,62 C70,64.2 68.2,66 66,66 C63.8,66 62,64.2 62,62 Z" />
+
+        <!-- Center Indicator / Top Headlight -->
+        <path
+            android:fillColor="#FF5252"
+            android:pathData="M52,22 C52,20.9 52.9,20 54,20 C55.1,20 56,20.9 56,22 L56,24 L52,24 Z" />
+
+        <!-- Front Grille / Bumper Accent -->
+        <path
+            android:fillColor="#00E5FF"
+            android:pathData="M48,64 L60,64 L58,72 L50,72 Z" />
+
+        <!-- High-speed aerodynamic dynamic swoosh -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FFAB00"
+            android:strokeWidth="2"
+            android:strokeLineCap="round"
+            android:pathData="M24,78 C30,86 42,90 54,90 C66,90 78,86 84,78" />
+    </group>
+</vector>

@@ -1,0 +1,6 @@
+{
+  "name": "Transit Saathi",
+  "description": "Transit Saathi - Real-Time Public Transport Crowding & Safety Predictor for Mumbai local trains with crowd reporting, route optimization, and SOS.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
